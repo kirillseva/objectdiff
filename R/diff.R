@@ -4,7 +4,7 @@
 #' @param new_object list or tracked_environment.
 diff <- function(old_object, new_object) {
   list(deletions = deletions, modifications = modifications, additions = additions) %>%
-    lapply(., function(x) { if(!is.function(x)) stop('Somehow applying a non-function! instead it is', class(x)) }) %>%
+    lapply(., function(x) { if(!is.function(x)) {stop('Somehow applying a non-function! instead it is', class(x))}; x }) %>%
     invoke(., old_object, new_object) %>%
     Filter(f = Negate(is.identity_patch)) %>%
     map_call(compose) %>%
