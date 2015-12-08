@@ -4,14 +4,15 @@
 #' @param new_object list or tracked_environment.
 diff <- function(old_object, new_object) {
   list(deletions = deletions, modifications = modifications, additions = additions) %>%
-    invoke(old_object, new_object) %>%
+    lapply(., function(x) { if(!is.function(x)) stop('Somehow applying a non-function! instead it is', class(x)) }) %>%
+    invoke(., old_object, new_object) %>%
     Filter(f = Negate(is.identity_patch)) %>%
     map_call(compose) %>%
     as.patch()
 }
 
 #' Compute a patch of deletions on a recursive object.
-#' 
+#'
 #' @inheritParams objectdiff
 #' @export
 deletions <- function(old_object, new_object) {
@@ -19,7 +20,7 @@ deletions <- function(old_object, new_object) {
 }
 
 #' Compute a patch of modifications on a recursive object.
-#' 
+#'
 #' @inheritParams objectdiff
 #' @export
 modifications <- function(old_object, new_object) {
@@ -27,10 +28,9 @@ modifications <- function(old_object, new_object) {
 }
 
 #' Compute a patch of additions on a recursive object.
-#' 
+#'
 #' @inheritParams objectdiff
 #' @export
 additions <- function(old_object, new_object) {
   UseMethod("additions")
 }
-
